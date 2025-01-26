@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RollCall AI - User Recognized</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Lilita One', sans-serif;
+      background: #f7fafd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+    .card-left {
+      width: 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eaf3f9;
+      border-radius: 0 0px 0px 0;
+      overflow: hidden;
+    }
+    .card-right {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, #eaf3f9, #d3e6f1);
+      padding: 10px;
+    }
+    .camera-wrapper {
+      width: 90%;
+      height: 80%;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    video#camera {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .container {
+      width: 80%;
+      height: 80%;
+      background: #fff;
+      border-radius: 25px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #3a7a9c;
+      margin-top: -20px;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+      font-family: 'Lilita One', sans-serif;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      color: #5a91aa;
+      margin-top: 5px;
+      font-family: 'Lilita One', sans-serif;
+    }
+    .user-info {
+      margin-top: 40px;
+      font-size: 1.2rem;
+      color: #6a9db5;
+      font-family: 'Lilita One', sans-serif;
+      text-align: left;
+      width: 90%;
+    }
+    .schedule {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #5a91aa;
+    }
+    .insight {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      color: #5a91aa;
+      font-style: italic;
+    }
+    .back-button {
+      margin-top: 50px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #3a7a9c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .back-button:hover {
+      background-color: #2a5a6d;
+    }
+    .overlay-image {
+      position: absolute;
+      bottom: 9.5%;
+      right: 6%;
+      width: 20vw; /* 5% of the viewport width */
+      height: auto;
+      z-index: 9999; /* Ensure it's on top */
+      opacity: 50%;
+    }
+    .top_overlay-image {
+      position: absolute;
+      top: 9.5%;
+      left: 6%;
+      width: 20vw; /* 5% of the viewport width */
+      height: auto;
+      z-index: 9999; /* Ensure it's on top */
+      opacity: 50%;
+    }
+  </style>
+</head>
+<script>
+    async function getInsight() {
+      try {
+        const userSchedule = [
+          { subject: "Math 101", time: "9:00 AM" },
+          { subject: "CS 202", time: "11:00 AM" },
+          { subject: "History 301", time: "1:00 PM" },
+        ]; // Replace with the actual schedule object
+
+        const response = await fetch('http://127.0.0.1:5000', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ schedule: userSchedule }),
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          console.error("Error:", data.error);
+          document.getElementById('insight').innerText = "Error fetching insight.";
+          return;
+        }
+
+        document.getElementById('insight').innerText = data.insight;
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('insight').innerText = "Error fetching insight.";
+      }
+    }
+
+    window.onload = getInsight;
+  </script>
+<body>
+  <div class="card-container">
+    <div class="card-left">
+      <div class="camera-wrapper">
+        <video id="camera" autoplay aria-label="Webcam view for facial recognition"></video>
+      </div>
+    </div>
+    <div class="card-right">
+      <div class="container">
+        <h1 class="title" id="userName">Hello, John Doe!</h1>
+        <p class="subtitle">You Have Made it to Class On Time</p>
+        <div class="user-info">
+          <h3>---------------------------------------------------------</h3>
+            <h3>Schedule:</h3>
+          <ul class="schedule" id="schedule">
+            <li>Math 101 - 9:00 AM</li>
+            <li>CS 202 - 11:00 AM</li>
+            <li>History 301 - 1:00 PM</li>
+          </ul>
+          <h3>---------------------------------------------------------</h3>
+          <h3>Insight:</h3>
+          <p class="insight" id="insight">Loading insight...</p>
+        </div>
+        <button class="back-button" onclick="window.location.href='HeaderPage.html'">Back to Main Page</button>
+      </div>
+      <img src="Decals/Decal_1.png" alt="Overlay" class="overlay-image">
+      <img src="Decals/Decal_2.png" alt="Overlay" class="overlay-image">
+    </div>
+  </div>
+
+  <script>
+    const camera = document.getElementById("camera");
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        camera.srcObject = stream;
+      })
+      .catch(error => {
+        console.error("Error accessing webcam:", error);
+      });
+
+    async function getInsight() {
+      const userSchedule = [
+        "Math 101 - 9:00 AM",
+        "CS 202 - 11:00 AM",
+        "History 301 - 1:00 PM"
+      ];
+      const userName = "John Doe";
+      
+      try {
+        const response = await fetch('/get-insight', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ schedule: userSchedule })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          console.error("Error:", data.error);
+          return;
+        }
+
+        // Update the dynamic content on the page
+        document.getElementById('userName').innerText = `Hello, ${userName}!`;
+        document.getElementById('schedule').innerHTML = userSchedule.map(item => `<li>${item}</li>`).join('');
+        document.getElementById('insight').innerText = data.insight; // Replace with dynamic insight
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    // Call the function to load the insight when the page is ready
+    window.onload = getInsight;
+  </script>
+</body>
+</html>
